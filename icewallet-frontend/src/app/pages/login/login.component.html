@@ -1,0 +1,76 @@
+<div class="container">
+  <div class="row centered">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+      <h1>IceWallet Login</h1>
+    </div>
+    <div class="alert alert-danger" role="alert" *ngIf="loginError" (click)="loginError = ''">{{ loginError }}</div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-12 " style="margin-top: 20px;">
+      <div class="form-group">
+        <label for="password" class="inline">Password:</label>
+        <input type="password" class="form-control inline" id="password" placeholder="Password" [(ngModel)]="password" (keydown)="handlePasswordKeyDown($event)" autofocus>
+      </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-12" style="margin-top: 20px;">
+      <button class="btn btn-primary" style="width: 100px;" (click)="login()">Login</button>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-12" style="margin-top: 20px;">
+      <label class="form-check-label">
+        <input class="form-check-input" type="checkbox" (change)="onSpecifyServerChange($event)">
+        Specify Server
+      </label>
+    </div>
+  </div>
+  <div *ngIf="specifyServer">
+    <hr class="splitter">
+    <label class="section-header"><i class="fa-solid fa-server"></i>Specify Server Info</label>
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="server" class="inline">Full API URL (no / at the end):</label>
+          <input type="text" class="form-control inline" id="server" placeholder="Example: https://server.com:5678/api" [(ngModel)]="apiUrl">
+        </div>
+        <div class="form-group">
+          <label for="server" class="inline">Public Key:</label>
+          <textarea class="form-control" id="publicKey" rows="10" [(ngModel)]="publicKey"></textarea>
+        </div>
+      </div>
+      <div class="col-lg-12 col-md-12 col-sm-12 col-12 centered" style="margin-top: 20px;">
+        <button type="submit" class="btn btn-primary" style="margin-right: 10px;" (click)="getServerPublicKey(confirmPopup)">Obtain Public Key From Server</button>
+        <button type="submit" class="btn btn-primary" style="margin-right: 10px;" (click)="saveServerInfoButton(confirmPopup)">Save</button>
+        <button type="submit" class="btn btn-danger" (click)="resetServerInfo(confirmPopup)">Reset to Default</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #confirmPopup let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ confirmMode === -1 ? 'Message' : 'Confirm' }}</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('cancel')"></button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="mb-3">
+        <div>{{ confirmMessage }}</div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+      *ngIf="confirmMode !== -1"
+      type="button"
+      class="btn btn-outline-dark"
+      (click)="modal.dismiss('cancel')"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="btn"
+      [ngClass]="confirmMode === -1 ? 'btn-primary' : 'btn-danger'"
+      (click)="popupConfirm(modal)"
+    >
+      Confirm
+    </button>
+  </div>
+</ng-template>

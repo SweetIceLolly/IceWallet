@@ -1,0 +1,11 @@
+<div class="outer-container">
+  <app-header *ngIf="getUrlPath() !== '/login'"></app-header>
+  <div class="loading-popup" id="loadingPopup">
+    <i class="fa fa-spinner fa-spin fa-2x fa-fw"></i>
+    <span>Loading...</span>
+  </div>
+  <div class="inner-container">
+    <router-outlet></router-outlet>
+  </div>
+  <app-footer *ngIf="getUrlPath() !== '/login'"></app-footer>
+</div>

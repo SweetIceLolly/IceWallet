@@ -1,0 +1,32 @@
+.outer-container {
+  min-height: 100%;
+}
+
+.inner-container {
+  min-height: calc(100vh - 50px - 50px - 10px);
+  margin-bottom: 20px;
+}
+
+.loading-popup {
+  width: 150px;
+  height: 50px;
+  position: absolute;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: #fff;
+  border: 1px solid #000;
+  border-radius: 5px;
+  text-align: center;
+  padding: 5px;
+  z-index: 100;
+  display: none;
+}
+
+.loading-popup span {
+  margin-left: 5px;
+  font-size: 18px;
+  transform: translateY(-5px);
+}

@@ -1,0 +1,48 @@
+/* Global styles */
+html, body, app-root {
+  height: 100%;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+/* Container (extends bootstrap's container class) */
+.container {
+  padding-top: 10px;
+}
+
+/* Section header in the forms */
+.section-header {
+  padding: 5px;
+  font-size: 18px;
+  color: #5c0b97;
+}
+
+.subsection-header {
+  padding: 5px;
+  font-size: 16px;
+  color: #303030;
+}
+
+/* Expand the height of a div inside a col, then vertically align all elements inside that div */
+.vert-align {
+  height: 100%;
+}
+
+.vert-align * {
+  top: 50%;
+  position: relative;
+}
+
+/* Font awesome icons to the left of texts */
+label svg, a svg, button svg {
+  margin-right: 5px;
+}
+
+/* Splitter class for hr elements. Splits a section */
+.splitter {
+  margin: 30px 0;
+}

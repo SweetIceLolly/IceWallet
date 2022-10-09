@@ -1,0 +1,68 @@
+.add-button {
+  width: 85px;
+  float: right;
+}
+
+.inline {
+  display: inline-block;
+  margin-left: 10px;
+  width: auto;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.no-new-line {
+  white-space: nowrap;
+}
+
+.items-count-container {
+  display: inline-block;
+}
+
+.page-num-btn {
+  margin: 0 10px;
+  cursor: pointer;
+  color: #303030;
+}
+
+.page-num-btn:hover {
+  color: #6079ff;
+}
+
+.page-num-input {
+  display: inline-block;
+  width: 50px;
+}
+
+.sort-by-container {
+  float: right;
+}
+
+.sort-by-container select {
+  display: inline-block;
+  width: 120px;
+}
+
+.autocomplete-container {
+  position: absolute;
+  z-index: 10;
+  font-size: 17px;
+  background-color: #fafafaea;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  min-width: 160px;
+}
+
+.autocomplete-item {
+  padding: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.autocomplete-item:hover, .autocomplete-item-focused {
+  background-color: #6079fff0;
+  color: #fff;
+  transition: all 0.2s ease
+}

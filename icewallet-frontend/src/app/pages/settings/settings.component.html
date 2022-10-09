@@ -1,0 +1,83 @@
+<div class="container">
+  <label class="section-header"><i class="fa-solid fa-gear"></i>General Settings</label>
+  <div class="row">
+    <div class="col-lg-3 col-md-6 col-sm-6 col-6">
+      <label class="subsection-header"><i class="fa-solid fa-list"></i>Default items/page</label>
+      <select class="form-select inline" (change)="updateDefaultItemsPerPage($event)" id="default-items-per-page">
+        <option [selected]="itemsPerPage === '10'" value="10">10</option>
+        <option [selected]="itemsPerPage === '25'" value="25">25</option>
+        <option [selected]="itemsPerPage === '50'" value="50">50</option>
+        <option [selected]="itemsPerPage === '100'" value="100">100</option>
+      </select>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6 col-6">
+      <label class="subsection-header"><i class="fa-solid fa-palette"></i>Positive Amount Color</label>
+      <input type="text" class="form-control" (change)="updateDefaultPositiveAmountColor($event)" [(ngModel)]="positiveColor">
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6 col-6">
+      <label class="subsection-header"><i class="fa-solid fa-palette"></i>Negative Amount Color</label>
+      <input type="text" class="form-control" (change)="updateDefaultNegativeAmountColor($event)" [(ngModel)]="negativeColor">
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6 col-6">
+      <div class="vert-align">
+        <button type="button" class="btn btn-danger" (click)="resetDefaults(confirmPopup)"><i class="fa-solid fa-broom"></i>Reset to Default</button>
+      </div>
+    </div>
+  </div>
+  <hr class="splitter">
+  <label class="section-header"><i class="fa-solid fa-user"></i>Credential Settings</label>
+  <div class="alert alert-danger" role="alert" *ngIf="settingsError" (click)="settingsError = ''">{{ settingsError }}</div>
+  <div class="row">
+    <div class="col-lg-3 col-md-6 col-sm-6 col-6">
+      <label class="subsection-header"><i class="fa-solid fa-key"></i>Current Password</label>
+      <input type="password" class="form-control" id="currPsw" [(ngModel)]="oldPassword" (keydown)="handleCurrPswKeyDown($event)">
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6 col-6">
+      <label class="subsection-header"><i class="fa-solid fa-key"></i>New Password</label>
+      <input type="password" class="form-control" id="newPsw" [(ngModel)]="newPassword" (keydown)="handleNewPswKeyDown($event)">
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6 col-6">
+      <label class="subsection-header"><i class="fa-solid fa-key"></i>Confirm Password</label>
+      <input type="password" class="form-control" id="confirmPsw" [(ngModel)]="confirmPassword" (keydown)="handleConfirmPswKeyDown($event, confirmPopup)">
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+      <div class="vert-align">
+        <button type="button" class="btn btn-primary" style="margin-right: 10px" (click)="changePassword(confirmPopup)"><i class="fa-solid fa-check"></i>Confirm</button>
+        <button type="button" class="btn btn-danger" style="margin-right: 10px" (click)="logout(confirmPopup)"><i class="fa-solid fa-door-open"></i>Logout</button>
+        <button type="button" class="btn btn-danger" (click)="clearServerTokens(confirmPopup)"><i class="fa-solid fa-trash"></i>Clear Server Tokens</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #confirmPopup let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ confirmMode === -1 ? 'Message' : 'Confirm' }}</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('cancel')"></button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="mb-3">
+        <div>{{ confirmMessage }}</div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+      *ngIf="confirmMode !== -1"
+      type="button"
+      class="btn btn-outline-dark"
+      (click)="modal.dismiss('cancel')"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="btn"
+      [ngClass]="confirmMode === -1 ? 'btn-primary' : 'btn-danger'"
+      (click)="popupConfirm(modal)"
+    >
+      Confirm
+    </button>
+  </div>
+</ng-template>

@@ -1,0 +1,67 @@
+.inline {
+  display: inline-block;
+  margin-left: 10px;
+  width: auto;
+}
+
+.add-button svg {
+  margin: unset;
+}
+
+.filter-row {
+  margin-bottom: 10px;
+}
+
+.page-num-btn {
+  margin: 0 10px;
+  cursor: pointer;
+  color: #303030;
+}
+
+.page-num-btn:hover {
+  color: #6079ff;
+}
+
+.page-num-input {
+  display: inline-block;
+  width: 50px;
+}
+
+.items-count-container {
+  display: inline-block;
+}
+
+.sort-by-container {
+  float: right;
+}
+
+.sort-by-container select {
+  display: inline-block;
+  width: 120px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.edit-button {
+  color: #303030;
+  margin-right: 10px;
+}
+
+.edit-button {
+  cursor: pointer;
+}
+
+.edit-button:hover {
+  color: #6079ff;
+}
+
+.edit-button-red:hover {
+  color: #ff0000;
+}
+
+.edit-section {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}

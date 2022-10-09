@@ -1,0 +1,33 @@
+<div class="header">
+  <a
+    class="header-link"
+    [ngClass]="{'header-active': getUrlPath() == '/' }"
+    routerLink=""
+  >
+    <i class="fa-solid fa-gauge"></i>Dashboard
+  </a>
+
+  <a
+    class="header-link"
+    [ngClass]="{'header-active': getUrlPath() == '/manage-entries' }"
+    routerLink="/manage-entries"
+  >
+    <i class="fa-solid fa-database"></i>Entries
+  </a>
+
+<!--  <a-->
+<!--    class="header-link"-->
+<!--    [ngClass]="{'header-active': getUrlPath() == '/manage-types' }"-->
+<!--    routerLink="/manage-types"-->
+<!--  >-->
+<!--    <i class="fa-solid fa-chart-pie"></i>Types-->
+<!--  </a>-->
+
+  <a
+    class="header-link"
+    [ngClass]="{'header-active': getUrlPath() == '/settings' }"
+    routerLink="/settings"
+  >
+    <i class="fa-solid fa-gear"></i>Settings
+  </a>
+</div>

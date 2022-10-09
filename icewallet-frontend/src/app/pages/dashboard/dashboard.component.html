@@ -1,0 +1,141 @@
+<div class="container">
+  <label class="section-header"><i class="fa-solid fa-folder-plus"></i>New Record</label>
+
+  <div class="alert alert-danger" role="alert" *ngIf="addEntryError" (click)="addEntryError = ''">{{ addEntryError }}</div>
+  <div class="alert alert-danger" role="alert" *ngIf="loadEntryError" (click)="loadEntryError = ''">{{ loadEntryError }}</div>
+  <div class="alert alert-info" role="alert" *ngIf="itemAdded" (click)="itemAdded = false">Entry Added</div>
+
+  <div class="row">
+    <div class="col-lg-3 col-md-3 col-sm-6 col-6">
+      <label class="subsection-header" for="new-record-desc"><i class="fa-solid fa-pen"></i>Description</label>
+      <input
+        type="text"
+        class="form-control"
+        id="new-record-desc"
+        placeholder="Description"
+        [(ngModel)]="newEntry.description"
+        (keydown)="handleDescKeyDown($event)"
+        (keyup)="handleDescKeyUp($event)"
+        (focusin)="showAutoComplete = true"
+        (focusout)="hideAutoComplete()"
+        autofocus
+      >
+      <div class="autocomplete-container" *ngIf="showAutoComplete">
+        <div
+          *ngFor="let word of descAutoComplete; let i = index"
+          class="autocomplete-item"
+          [ngClass]="i === autoCompleteIndex ? 'autocomplete-item-focused' : ''"
+          (click)="selectAutoComplete(i)"
+        >
+          {{ word }}
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-6">
+      <label class="subsection-header" for="new-record-amount"><i class="fa-solid fa-sack-dollar"></i>Amount</label>
+      <input
+        type="number"
+        class="form-control"
+        id="new-record-amount"
+        placeholder="Amount"
+        step="0.01"
+        [(ngModel)]="newEntry.amount"
+        (keydown)="handleAmountKeyDown($event)"
+      >
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-6">
+      <div class="form-check vert-align">
+        <input class="form-check-input" type="checkbox" id="specific-date" (change)="onSpecificDateChange($event)">
+        <label class="form-check-label" for="specific-date">Specific Date</label>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-6">
+      <div class="vert-align">
+        <button type="button" class="btn btn-primary add-button" id="add-record-btn" (click)="addEntry()"><i class="fa-solid fa-plus"></i>Add</button>
+      </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-12" *ngIf="specificDate">
+      <label class="subsection-header"><br><i class="fa-solid fa-calendar"></i>Date</label>
+      <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-6 col-6">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" id="time-yesterday" value="yesterday" [(ngModel)]="specificDateType">
+            <label class="form-check-label" for="time-yesterday">Yesterday</label>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-6 col-6">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" id="time-lastweek" value="lastWeek" [(ngModel)]="specificDateType">
+            <label class="form-check-label" for="time-lastweek">Last</label>
+            <select class="form-select inline" [(ngModel)]="lastWeekValue" (change)="specificDateType = 'lastWeek'">
+              <option selected value="1">Mon</option>
+              <option value="2">Tue</option>
+              <option value="3">Wed</option>
+              <option value="4">Thu</option>
+              <option value="5">Fri</option>
+              <option value="6">Sat</option>
+              <option value="7">Sun</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-12">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" id="time-specific" value="specific" [(ngModel)]="specificDateType">
+            <label class="form-check-label" for="time-specific">Specific:</label>
+            <input type="date" class="form-control inline" id="specific-date" [(ngModel)]="specificDateValue" (change)="specificDateType = 'specific'">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr class="splitter">
+  <label class="section-header"><i class="fa-solid fa-clock-rotate-left"></i>Recent Records</label>
+  <div class="page-number-container row">
+    <div class="col-lg-4 col-md-5 col-sm-12 col-12">
+      Page:
+      <a class="page-num-btn" (click)="setPage(1)"><i class="fa-solid fa-angle-double-left"></i></a>
+      <a class="page-num-btn" (click)="setPage(currentPage - 1)"><i class="fa-solid fa-angle-left"></i></a>
+      <input type="number" class="form-control page-num-input" value="1" [(ngModel)]="pageNumInput" [min]="1" [max]="totalPages" (keydown)="handlePageNumKeyDown($event)"> of {{ totalPages }}
+      <a class="page-num-btn" (click)="setPage(currentPage + 1)"><i class="fa-solid fa-angle-right"></i></a>
+      <a class="page-num-btn" (click)="setPage(totalPages)"><i class="fa-solid fa-angle-double-right"></i></a>
+    </div>
+    <div class="col-lg-8 col-md-7 col-sm-12 col-12">
+      <div class="items-count-container">
+        <select class="form-select inline" (change)="updateItemsPerPage($event)">
+          <option [selected]="itemsPerPage === 10" value="10">10</option>
+          <option [selected]="itemsPerPage === 25" value="25">25</option>
+          <option [selected]="itemsPerPage === 50" value="50">50</option>
+          <option [selected]="itemsPerPage === 100" value="100">100</option>
+        </select>
+        <span> Items/page</span>
+      </div>
+      <div class="sort-by-container">
+        <span>Sort by</span>
+        <select class="form-select inline" (change)="updateSortBy($event)">
+          <option selected value="date">Date</option>
+          <option value="desc">Desc.</option>
+          <option value="amount">Amount</option>
+          <option value="entryDate">Time of entry</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="table-container">
+    <table class="table table-hover table-sm no-new-line">
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Desc.</th>
+          <th scope="col">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let entry of recentEntries" [style]="'background-color:' + (entry.amount > 0 ? positiveItemBgColor : negativeItemBgColor)">
+          <th scope="row">{{ formatDate(entry.date) }}</th>
+          <td>{{ entry.description }}</td>
+          <td>{{ formatAmount(entry.amount) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

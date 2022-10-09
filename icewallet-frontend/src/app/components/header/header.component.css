@@ -1,0 +1,24 @@
+.header {
+  background-color: #f5f5f5;
+  padding: 10px;
+  margin: 0;
+  width: 100%;
+  overflow: auto;
+  white-space: nowrap;
+}
+
+.header-link {
+  color: #333;
+  text-decoration: none;
+  cursor: pointer;
+  margin-right: 30px;
+  white-space: nowrap;
+}
+
+.header-link:hover {
+  color: #6179ff;
+}
+
+.header-active {
+  color: #6179ff !important;
+}

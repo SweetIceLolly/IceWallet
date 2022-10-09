@@ -31,6 +31,7 @@ class Trie {
 
   public getAllChildren(prefix: string): string[] {
     const LIMIT: number = 10;
+    prefix = prefix.toLowerCase();
 
     let currNode: TrieNode = this.root;
     const words: string[] = [];

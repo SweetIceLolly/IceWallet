@@ -41,7 +41,7 @@ CORS_DOMAINS=https://your.domain.com,https://another.domain.com
 5. Run `icewallet-backend` to start the backend server.
 6. You may want to configure your webserver so that it runs a reverse-proxy for your backend server.
 
-## Troubleshooting:
+## Troubleshooting
 - An error occured right after the server saying "Loading environment variables...": Did you put the `.env` file in the same working folder as the backend server? Did you edit your `.env` file correctly (following the above template)?
 - An error occured right after the server saying "Connecting to database...": Please make sure the MongoDB server is running, and you have configured the MongoDB URI correctly. Make sure you have also included the database user credentials (you may need to set `authSource`) in the URI.
 - "Password does not exists, please run with --pwd to set a password": You haven't set a password yet. Run `icewallet-backend --pwd` to set a password.

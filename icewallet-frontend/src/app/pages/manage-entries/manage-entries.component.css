@@ -25,6 +25,7 @@
 .page-num-input {
   display: inline-block;
   width: 50px;
+  padding: 0;
 }
 
 .items-count-container {

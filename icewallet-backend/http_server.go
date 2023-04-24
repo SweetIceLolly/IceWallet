@@ -7,12 +7,15 @@ import (
 )
 
 var corsDomains map[string]bool
+var corsAllowRoutes = map[string]bool{
+	"/getPublicKey": true,
+}
 
 func addHttpRoute(method string, path string, handler http.HandlerFunc) {
 	if method == "GET" {
 		http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 			// Check if domain is allowed
-			if !corsDomains[r.Header.Get("Origin")] {
+			if !corsDomains[r.Header.Get("Origin")] && !corsAllowRoutes[path] {
 				w.WriteHeader(http.StatusForbidden)
 				return
 			} else {
@@ -35,7 +38,7 @@ func addHttpRoute(method string, path string, handler http.HandlerFunc) {
 	} else if method == "POST" {
 		http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 			// Check if domain is allowed
-			if !corsDomains[r.Header.Get("Origin")] {
+			if !corsDomains[r.Header.Get("Origin")] && !corsAllowRoutes[path] {
 				w.WriteHeader(http.StatusForbidden)
 				return
 			} else {

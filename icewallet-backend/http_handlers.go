@@ -406,6 +406,14 @@ Body fields: none
 Response: 200 OK if successful, no body
 */
 func clearTokensHandler(w http.ResponseWriter, r *http.Request) {
+	// Verify token
+	token := r.Header.Get("Authorization")
+	if !verifyToken(token) {
+		http.Error(w, "Invalid token", http.StatusUnauthorized)
+		return
+	}
+
+	// Delete all tokens
 	err := deleteAllTokens()
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)

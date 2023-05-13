@@ -20,7 +20,7 @@ Output will be a folder: `dist/icewallet-frontend`
 # Deployment
 Note: You will need to use a webserver such as Nginx and install MongoDB
 
-Deploy frontend: Configure your webserver so that it serves the `icewallet-backend` folder
+Deploy frontend: Configure your webserver so that it serves the `icewallet-frontend` folder
 
 Deploy backend:
 1. Make sure your MongoDB server is running.

@@ -4,3 +4,4 @@ export const DEFAULT_SERVER_PUBLIC_KEY: string = "-----BEGIN RSA PUBLIC KEY-----
 export const DEFAULT_ITEMS_PER_PAGE: string = "10";
 export const DEFAULT_POSITIVE_AMOUNT_COLOR: string = "#ffeedd";
 export const DEFAULT_NEGATIVE_AMOUNT_COLOR: string = "#fff";
+export const DEFAULT_NEGATIVE_BY_DEFAULT: boolean = true;

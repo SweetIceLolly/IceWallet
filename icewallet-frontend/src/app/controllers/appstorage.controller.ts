@@ -55,4 +55,16 @@ export class AppStorageController {
   getNegativeAmountColor(): string {
     return localStorage.getItem("negativeAmountColor") || Constants.DEFAULT_NEGATIVE_AMOUNT_COLOR;
   }
+
+  setNegativeByDefault(value: boolean): void {
+    localStorage.setItem("negativeByDefault", value ? "true" : "false");
+  }
+
+  getNegativeByDefault(): boolean {
+    const stored = localStorage.getItem("negativeByDefault");
+    if (stored === null) {
+      return Constants.DEFAULT_NEGATIVE_BY_DEFAULT;
+    }
+    return stored === "true";
+  }
 }

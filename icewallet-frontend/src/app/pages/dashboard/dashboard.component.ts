@@ -40,6 +40,7 @@ export class DashboardComponent implements OnInit {
 
   positiveItemBgColor: string = Constants.DEFAULT_POSITIVE_AMOUNT_COLOR;
   negativeItemBgColor: string = Constants.DEFAULT_NEGATIVE_AMOUNT_COLOR;
+  negativeByDefault: boolean = Constants.DEFAULT_NEGATIVE_BY_DEFAULT;
 
   constructor(
     private entryCtrl: EntryController,
@@ -59,6 +60,7 @@ export class DashboardComponent implements OnInit {
     this.itemsPerPage = Number(this.appStorageCtrl.getDefaultItemsPerPage());
     this.positiveItemBgColor = this.appStorageCtrl.getPositiveAmountColor();
     this.negativeItemBgColor = this.appStorageCtrl.getNegativeAmountColor();
+    this.negativeByDefault = this.appStorageCtrl.getNegativeByDefault();
 
     // Empty amount
     (this.newEntry as any).amount = '';
@@ -214,6 +216,25 @@ export class DashboardComponent implements OnInit {
       this.addEntryError = "Please provide a valid amount";
       document.getElementById('new-record-amount')?.focus();
       return;
+    }
+
+    // Apply negative by default logic
+    const amountStr = String(this.newEntry.amount).trim();
+    const amountValue = Math.abs(Number(this.newEntry.amount));
+    if (this.negativeByDefault) {
+      // Negative unless "+" sign is present
+      if (amountStr.startsWith('+')) {
+        this.newEntry.amount = amountValue;
+      } else {
+        this.newEntry.amount = -amountValue;
+      }
+    } else {
+      // Positive unless "-" sign is present
+      if (amountStr.startsWith('-')) {
+        this.newEntry.amount = -amountValue;
+      } else {
+        this.newEntry.amount = amountValue;
+      }
     }
     if (this.newEntry.date === undefined) {
       this.addEntryError = "Please provide a date";

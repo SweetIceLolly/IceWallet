@@ -19,6 +19,7 @@ export class SettingsComponent implements OnInit {
   itemsPerPage: string = '';
   positiveColor: string = '';
   negativeColor: string = '';
+  negativeByDefault: boolean = true;
 
   confirmMessage: string = '';
   confirmMode: number = 0;      // -1: Just a message; 0: Reset to default; 1: Clear server tokens; 2: Logout
@@ -41,6 +42,7 @@ export class SettingsComponent implements OnInit {
     this.itemsPerPage = this.appStorageCtrl.getDefaultItemsPerPage();
     this.positiveColor = this.appStorageCtrl.getPositiveAmountColor();
     this.negativeColor = this.appStorageCtrl.getNegativeAmountColor();
+    this.negativeByDefault = this.appStorageCtrl.getNegativeByDefault();
   }
 
   changePassword(popupModal: any) {
@@ -115,6 +117,11 @@ export class SettingsComponent implements OnInit {
     this.appStorageCtrl.setNegativeAmountColor(event.target.value);
   }
 
+  updateNegativeByDefault(event: any) {
+    this.negativeByDefault = event.target.checked;
+    this.appStorageCtrl.setNegativeByDefault(this.negativeByDefault);
+  }
+
   resetDefaults(popupModal: any) {
     this.confirmMessage = 'Are you sure you want to reset all settings to default?';
     this.confirmMode = 0;
@@ -144,12 +151,14 @@ export class SettingsComponent implements OnInit {
       this.appStorageCtrl.setDefaultItemsPerPage('');
       this.appStorageCtrl.setPositiveAmountColor('');
       this.appStorageCtrl.setNegativeAmountColor('');
+      localStorage.removeItem('negativeByDefault');
       this.appStorageCtrl.setDefaultItemsPerPage(this.appStorageCtrl.getDefaultItemsPerPage());
       this.appStorageCtrl.setPositiveAmountColor(this.appStorageCtrl.getPositiveAmountColor());
       this.appStorageCtrl.setNegativeAmountColor(this.appStorageCtrl.getNegativeAmountColor());
       this.itemsPerPage = this.appStorageCtrl.getDefaultItemsPerPage();
       this.positiveColor = this.appStorageCtrl.getPositiveAmountColor();
       this.negativeColor = this.appStorageCtrl.getNegativeAmountColor();
+      this.negativeByDefault = this.appStorageCtrl.getNegativeByDefault();
       (document.getElementById('default-items-per-page') as any).value = this.itemsPerPage;
     } else if (this.confirmMode === 1) {
       // Clear server tokens

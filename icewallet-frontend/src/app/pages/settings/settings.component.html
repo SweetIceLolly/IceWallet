@@ -18,6 +18,14 @@
       <label class="subsection-header"><i class="fa-solid fa-palette"></i>Negative Amount Color</label>
       <input type="text" class="form-control" (change)="updateDefaultNegativeAmountColor($event)" [(ngModel)]="negativeColor">
     </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-6 col-6">
+      <div class="form-check vert-align">
+        <input class="form-check-input" type="checkbox" id="negative-by-default" [checked]="negativeByDefault" (change)="updateNegativeByDefault($event)">
+        <label class="form-check-label" for="negative-by-default">Negative by default (value is negative unless "+" sign is present)</label>
+      </div>
+    </div>
     <div class="col-lg-3 col-md-6 col-sm-6 col-6">
       <div class="vert-align">
         <button type="button" class="btn btn-danger" (click)="resetDefaults(confirmPopup)"><i class="fa-solid fa-broom"></i>Reset to Default</button>

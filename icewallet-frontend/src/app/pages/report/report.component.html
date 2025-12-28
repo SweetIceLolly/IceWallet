@@ -29,6 +29,19 @@
         <option value="line">Line Chart</option>
       </select>
     </div>
+
+    <div class="control-group">
+      <label for="chartView">View:</label>
+      <select
+        id="chartView"
+        class="form-select"
+        [(ngModel)]="chartView"
+        (change)="onChartViewChange()"
+      >
+        <option value="incomeExpense">Income & Expense</option>
+        <option value="netIncome">Net Income</option>
+      </select>
+    </div>
   </div>
 
   <!-- Loading State -->

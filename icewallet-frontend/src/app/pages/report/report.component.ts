@@ -38,6 +38,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Chart type
   chartType: 'bar' | 'line' = 'bar';
+  chartView: 'incomeExpense' | 'netIncome' = 'incomeExpense';
 
   constructor(
     private entryCtrl: EntryController,
@@ -124,6 +125,15 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!ctx) return;
 
     const labels = this.monthlyData.map(d => d.month.substring(0, 3));
+
+    if (this.chartView === 'netIncome') {
+      this.renderNetIncomeChart(ctx, labels);
+    } else {
+      this.renderIncomeExpenseChart(ctx, labels);
+    }
+  }
+
+  renderIncomeExpenseChart(ctx: CanvasRenderingContext2D, labels: string[]): void {
     const incomeData = this.monthlyData.map(d => d.income);
     const expenseData = this.monthlyData.map(d => d.expense);
 
@@ -185,11 +195,82 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  renderNetIncomeChart(ctx: CanvasRenderingContext2D, labels: string[]): void {
+    const netData = this.monthlyData.map(d => d.net);
+    const backgroundColors = netData.map(value => 
+      value >= 0 ? 'rgba(76, 175, 80, 0.6)' : 'rgba(244, 67, 54, 0.6)'
+    );
+    const borderColors = netData.map(value => 
+      value >= 0 ? 'rgba(76, 175, 80, 1)' : 'rgba(244, 67, 54, 1)'
+    );
+
+    this.chart = new Chart(ctx, {
+      type: this.chartType,
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Net Income',
+            data: netData,
+            backgroundColor: this.chartType === 'bar' ? backgroundColors : 'rgba(76, 175, 80, 0.6)',
+            borderColor: this.chartType === 'bar' ? borderColors : 'rgba(76, 175, 80, 1)',
+            borderWidth: 2,
+            tension: 0.3,
+            segment: this.chartType === 'line' ? {
+              borderColor: (ctx: any) => {
+                const value = ctx.p1.parsed.y;
+                return value >= 0 ? 'rgba(76, 175, 80, 1)' : 'rgba(244, 67, 54, 1)';
+              }
+            } : undefined,
+            pointBackgroundColor: this.chartType === 'line' ? backgroundColors : undefined,
+            pointBorderColor: this.chartType === 'line' ? borderColors : undefined
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: `Monthly Net Income - ${this.selectedYear}`,
+            font: {
+              size: 16
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: (context) => {
+                const value = context.parsed.y ?? 0;
+                const sign = value >= 0 ? '+' : '';
+                return `Net: ${sign}$${value.toFixed(2)}`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            ticks: {
+              callback: (value) => `$${value}`
+            }
+          }
+        }
+      }
+    });
+  }
+
   onYearChange(): void {
     this.loadData();
   }
 
   onChartTypeChange(): void {
+    this.renderChart();
+  }
+
+  onChartViewChange(): void {
     this.renderChart();
   }
 

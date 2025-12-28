@@ -34,12 +34,11 @@
     <div class="col-lg-3 col-md-3 col-sm-6 col-6">
       <label class="subsection-header" for="new-record-amount"><i class="fa-solid fa-sack-dollar"></i>Amount</label>
       <input
-        type="number"
+        type="text"
         class="form-control"
         id="new-record-amount"
         placeholder="Amount"
-        step="0.01"
-        [(ngModel)]="newEntry.amount"
+        [(ngModel)]="amountInput"
         (keydown)="handleAmountKeyDown($event)"
       >
     </div>

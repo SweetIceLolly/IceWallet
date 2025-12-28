@@ -31,6 +31,7 @@ export class DashboardComponent implements OnInit {
 
   addEntryError: string = '';
   itemAdded: boolean = false;
+  amountInput: string = '';
 
   loadEntryError: string = '';
 
@@ -61,9 +62,6 @@ export class DashboardComponent implements OnInit {
     this.positiveItemBgColor = this.appStorageCtrl.getPositiveAmountColor();
     this.negativeItemBgColor = this.appStorageCtrl.getNegativeAmountColor();
     this.negativeByDefault = this.appStorageCtrl.getNegativeByDefault();
-
-    // Empty amount
-    (this.newEntry as any).amount = '';
 
     // Get recent entries
     this.getRecentEntries();
@@ -212,15 +210,15 @@ export class DashboardComponent implements OnInit {
       document.getElementById('new-record-desc')?.focus();
       return;
     }
-    if (isNaN(Number(this.newEntry.amount))) {
+    if (isNaN(Number(this.amountInput))) {
       this.addEntryError = "Please provide a valid amount";
       document.getElementById('new-record-amount')?.focus();
       return;
     }
 
     // Apply negative by default logic
-    const amountStr = String(this.newEntry.amount).trim();
-    const amountValue = Math.abs(Number(this.newEntry.amount));
+    const amountStr = this.amountInput.trim();
+    const amountValue = Math.abs(Number(this.amountInput));
     if (this.negativeByDefault) {
       // Negative unless "+" sign is present
       if (amountStr.startsWith('+')) {
@@ -246,7 +244,7 @@ export class DashboardComponent implements OnInit {
       this.addEntryError = '';
       this.itemAdded = true;
       this.newEntry = new WalletEntry();
-      (this.newEntry as any).amount = '';
+      this.amountInput = '';
       document.getElementById('new-record-desc')?.focus();
       this.getRecentEntries();
     }).catch((err: any) => {

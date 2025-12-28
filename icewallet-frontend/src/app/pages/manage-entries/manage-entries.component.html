@@ -75,8 +75,8 @@
       </div>
     </div>
   </div>
-  <div class="table-container">
-    <table class="table table-hover table-sm no-new-line">
+  <div class="table-container" (touchmove)="touchMoveSelection($event)">
+    <table class="table table-hover table-sm no-new-line selectable-table">
       <thead>
         <tr>
           <th scope="col">Date</th>
@@ -86,17 +86,30 @@
         </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let entry of entries" [style]="'background-color:' + (entry.amount > 0 ? positiveItemBgColor : negativeItemBgColor)">
+      <tr *ngFor="let entry of entries"
+          [attr.data-entry-id]="entry._id"
+          [class.selected]="isSelected(entry)"
+          [style]="!isSelected(entry) ? 'background-color:' + (entry.amount > 0 ? positiveItemBgColor : negativeItemBgColor) : ''"
+          (click)="toggleSelection(entry, $event)"
+          (mousedown)="startSelection(entry, $event)"
+          (mouseenter)="hoverSelection(entry)"
+          (touchstart)="startTouchSelection(entry, $event)"
+          (touchend)="cancelTouchSelection()"
+          (touchcancel)="cancelTouchSelection()">
         <th scope="row">{{ formatDate(entry.date) }}</th>
         <td>{{ entry.description }}</td>
         <td>{{ formatAmount(entry.amount) }}</td>
         <td>
-          <a class="edit-button" (click)="showEdit(entry, editPopup)" title="Edit"><i class="fa-solid fa-edit"></i></a>
-          <a class="edit-button edit-button-red" (click)="showDelete(entry, deletePopup)" title="Delete"><i class="fa-solid fa-trash"></i></a>
+          <a class="edit-button" (click)="showEdit(entry, editPopup); $event.stopPropagation()" title="Edit"><i class="fa-solid fa-edit"></i></a>
+          <a class="edit-button edit-button-red" (click)="showDelete(entry, deletePopup); $event.stopPropagation()" title="Delete"><i class="fa-solid fa-trash"></i></a>
         </td>
       </tr>
       </tbody>
     </table>
+  </div>
+  <div class="selection-sum-container" *ngIf="selectedEntries.size > 0">
+    <span class="selection-info">{{ selectedEntries.size }} item(s) selected: <strong>{{ formatAmount(selectionSum) }}</strong></span>
+    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="clearSelection()"><i class="fa-solid fa-times"></i> Clear</button>
   </div>
 </div>
 

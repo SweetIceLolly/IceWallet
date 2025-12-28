@@ -66,3 +66,48 @@
   margin-top: 20px;
   margin-bottom: 10px;
 }
+
+/* Multi-select styles */
+.selectable-table {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.selectable-table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.selectable-table tbody tr.selected {
+  background-color: #6079ff !important;
+  color: #fff;
+}
+
+.selectable-table tbody tr.selected th {
+  color: #fff;
+}
+
+.selection-sum-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 20px;
+  background-color: #e8ecff;
+  border-top: 2px solid #6079ff;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.selection-info {
+  flex-grow: 1;
+}
+
+.selection-info strong {
+  font-size: 1.1em;
+}

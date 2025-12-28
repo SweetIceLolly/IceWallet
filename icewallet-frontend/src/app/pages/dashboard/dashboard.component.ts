@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { WalletEntry } from '../../models/walletEntry';
@@ -42,6 +42,15 @@ export class DashboardComponent implements OnInit {
   positiveItemBgColor: string = Constants.DEFAULT_POSITIVE_AMOUNT_COLOR;
   negativeItemBgColor: string = Constants.DEFAULT_NEGATIVE_AMOUNT_COLOR;
   negativeByDefault: boolean = Constants.DEFAULT_NEGATIVE_BY_DEFAULT;
+
+  // Multi-select state
+  selectedEntries: Set<string> = new Set();
+  isSelecting: boolean = false;
+  selectionSum: number = 0;
+  dragStartEntryId: string = '';
+  didDrag: boolean = false;
+  touchHoldTimer: any = null;
+  touchHoldDelay: number = 300; // ms to hold before selection activates on touch
 
   constructor(
     private entryCtrl: EntryController,
@@ -283,5 +292,115 @@ export class DashboardComponent implements OnInit {
 
   formatAmount(amount: number) {
     return (amount < 0 ? '' : '+') + amount.toFixed(2);
+  }
+
+  // Multi-select methods
+  toggleSelection(entry: WalletEntry, event: MouseEvent | TouchEvent) {
+    // Only toggle if we didn't drag
+    if (this.didDrag) {
+      this.didDrag = false;
+      return;
+    }
+    event.preventDefault();
+    if (this.selectedEntries.has(entry._id)) {
+      this.selectedEntries.delete(entry._id);
+    } else {
+      this.selectedEntries.add(entry._id);
+    }
+    this.updateSelectionSum();
+  }
+
+  startSelection(entry: WalletEntry, event: MouseEvent) {
+    event.preventDefault();
+    this.isSelecting = true;
+    this.dragStartEntryId = entry._id;
+    this.didDrag = false;
+  }
+
+  startTouchSelection(entry: WalletEntry, event: TouchEvent) {
+    this.dragStartEntryId = entry._id;
+    this.didDrag = false;
+    // Start a timer - only activate selection after holding
+    this.touchHoldTimer = setTimeout(() => {
+      this.isSelecting = true;
+      // Add haptic feedback if available
+      if (navigator.vibrate) {
+        navigator.vibrate(50);
+      }
+      // Add the entry we're holding on
+      if (!this.selectedEntries.has(entry._id)) {
+        this.selectedEntries.add(entry._id);
+        this.updateSelectionSum();
+      }
+    }, this.touchHoldDelay);
+  }
+
+  cancelTouchSelection() {
+    if (this.touchHoldTimer) {
+      clearTimeout(this.touchHoldTimer);
+      this.touchHoldTimer = null;
+    }
+  }
+
+  hoverSelection(entry: WalletEntry) {
+    if (this.isSelecting) {
+      // First hover on a different entry means we're dragging
+      if (entry._id !== this.dragStartEntryId) {
+        this.didDrag = true;
+        // Add the start entry if not already added
+        if (!this.selectedEntries.has(this.dragStartEntryId)) {
+          this.selectedEntries.add(this.dragStartEntryId);
+        }
+      }
+      if (!this.selectedEntries.has(entry._id)) {
+        this.selectedEntries.add(entry._id);
+        this.updateSelectionSum();
+      }
+    }
+  }
+
+  endSelection() {
+    this.isSelecting = false;
+    this.cancelTouchSelection();
+  }
+
+  touchMoveSelection(event: TouchEvent) {
+    // If selection hasn't activated yet (still waiting for hold), cancel it
+    if (!this.isSelecting) {
+      this.cancelTouchSelection();
+      return;
+    }
+    const touch = event.touches[0];
+    const element = document.elementFromPoint(touch.clientX, touch.clientY);
+    const row = element?.closest('tr[data-entry-id]');
+    if (row) {
+      const entryId = row.getAttribute('data-entry-id');
+      if (entryId && !this.selectedEntries.has(entryId)) {
+        this.didDrag = true;
+        this.selectedEntries.add(entryId);
+        this.updateSelectionSum();
+      }
+    }
+  }
+
+  clearSelection() {
+    this.selectedEntries.clear();
+    this.selectionSum = 0;
+  }
+
+  updateSelectionSum() {
+    this.selectionSum = this.recentEntries
+      .filter(entry => this.selectedEntries.has(entry._id))
+      .reduce((sum, entry) => sum + entry.amount, 0);
+  }
+
+  isSelected(entry: WalletEntry): boolean {
+    return this.selectedEntries.has(entry._id);
+  }
+
+  @HostListener('document:mouseup')
+  @HostListener('document:touchend')
+  onDocumentMouseUp() {
+    this.endSelection();
   }
 }

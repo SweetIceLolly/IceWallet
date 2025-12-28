@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"reflect"
 	"sync"
@@ -421,4 +422,72 @@ func clearTokensHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+/*
+POST /getMonthlyReport
+Get monthly income and expense report for a given year
+Header: Authorization: <token>
+Body fields: year
+	year: the year to get the report for (e.g., 2025)
+Response:
+	{ monthlyData: [{ month: 1, income: 100.00, expense: 50.00 }, ...] }
+	Returns 12 months of data, with zero values for months with no entries
+*/
+func getMonthlyReportHandler(w http.ResponseWriter, r *http.Request) {
+	// Verify token
+	token := r.Header.Get("Authorization")
+	if !verifyToken(token) {
+		http.Error(w, "Invalid token", http.StatusUnauthorized)
+		return
+	}
+
+	// Parse body
+	var reportInfo map[string]interface{}
+	err := json.NewDecoder(r.Body).Decode(&reportInfo)
+	if err != nil {
+		http.Error(w, "Invalid body", http.StatusBadRequest)
+		return
+	}
+
+	// Parse year - accept both string and number formats
+	var year int
+	if reportInfo["year"] == nil {
+		http.Error(w, "Missing year field", http.StatusBadRequest)
+		return
+	}
+	switch v := reportInfo["year"].(type) {
+	case float64:
+		year = int(v)
+	case string:
+		_, err := fmt.Sscanf(v, "%d", &year)
+		if err != nil {
+			http.Error(w, "Invalid year format", http.StatusBadRequest)
+			return
+		}
+	default:
+		http.Error(w, "Invalid year type", http.StatusBadRequest)
+		return
+	}
+
+	// Validate year range (reasonable bounds)
+	if year < 1900 || year > 2100 {
+		http.Error(w, "Invalid year", http.StatusBadRequest)
+		return
+	}
+
+	// Get monthly report
+	monthlyData, err := getMonthlyReport(year)
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(map[string]interface{}{
+		"monthlyData": monthlyData,
+	})
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
 }

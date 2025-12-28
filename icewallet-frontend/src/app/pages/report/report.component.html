@@ -1,0 +1,119 @@
+<div class="container mt-4">
+  <h2 class="page-title">
+    <i class="fa-solid fa-chart-line"></i> Monthly Report
+  </h2>
+
+  <!-- Controls -->
+  <div class="controls-container">
+    <div class="control-group">
+      <label for="yearSelect">Year:</label>
+      <select
+        id="yearSelect"
+        class="form-select"
+        [(ngModel)]="selectedYear"
+        (change)="onYearChange()"
+      >
+        <option *ngFor="let year of availableYears" [value]="year">{{ year }}</option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label for="chartType">Chart Type:</label>
+      <select
+        id="chartType"
+        class="form-select"
+        [(ngModel)]="chartType"
+        (change)="onChartTypeChange()"
+      >
+        <option value="bar">Bar Chart</option>
+        <option value="line">Line Chart</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p>Loading data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="loadError" class="alert alert-danger">
+    {{ loadError }}
+  </div>
+
+  <!-- Chart -->
+  <div *ngIf="!isLoading && !loadError" class="chart-container">
+    <canvas #chartCanvas></canvas>
+  </div>
+
+  <!-- Summary Cards -->
+  <div *ngIf="!isLoading && !loadError" class="summary-container">
+    <div class="summary-card income-card">
+      <div class="summary-icon">
+        <i class="fa-solid fa-arrow-trend-up"></i>
+      </div>
+      <div class="summary-content">
+        <span class="summary-label">Total Income</span>
+        <span class="summary-value">${{ formatCurrency(totalIncome) }}</span>
+      </div>
+    </div>
+
+    <div class="summary-card expense-card">
+      <div class="summary-icon">
+        <i class="fa-solid fa-arrow-trend-down"></i>
+      </div>
+      <div class="summary-content">
+        <span class="summary-label">Total Expense</span>
+        <span class="summary-value">${{ formatCurrency(totalExpense) }}</span>
+      </div>
+    </div>
+
+    <div class="summary-card net-card" [ngClass]="{'positive': totalNet >= 0, 'negative': totalNet < 0}">
+      <div class="summary-icon">
+        <i class="fa-solid fa-scale-balanced"></i>
+      </div>
+      <div class="summary-content">
+        <span class="summary-label">Net Balance</span>
+        <span class="summary-value">${{ formatCurrency(totalNet) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Monthly Breakdown Table -->
+  <div *ngIf="!isLoading && !loadError" class="table-container">
+    <h4>Monthly Breakdown</h4>
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>Month</th>
+          <th class="text-end">Income</th>
+          <th class="text-end">Expense</th>
+          <th class="text-end">Net</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of monthlyData">
+          <td>{{ data.month }}</td>
+          <td class="text-end income-text">${{ formatCurrency(data.income) }}</td>
+          <td class="text-end expense-text">${{ formatCurrency(data.expense) }}</td>
+          <td class="text-end" [ngClass]="{'income-text': data.net >= 0, 'expense-text': data.net < 0}">
+            ${{ formatCurrency(data.net) }}
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr class="total-row">
+          <th>Total</th>
+          <th class="text-end">${{ formatCurrency(totalIncome) }}</th>
+          <th class="text-end">${{ formatCurrency(totalExpense) }}</th>
+          <th class="text-end" [ngClass]="{'income-text': totalNet >= 0, 'expense-text': totalNet < 0}">
+            ${{ formatCurrency(totalNet) }}
+          </th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>

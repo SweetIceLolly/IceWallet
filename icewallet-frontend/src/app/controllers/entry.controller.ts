@@ -90,4 +90,25 @@ export class EntryController {
         });
     });
   }
+
+  /**
+   * Get monthly income and expense report for a given year
+   * @returns { monthlyData: [{ month: number, income: number, expense: number }, ...] }
+   */
+  getMonthlyReport(year: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.http.post<any>(this.appStorageCtrl.getServerUrl() + "/getMonthlyReport", {
+        year: year
+      }, this.genCtrl.getAuthHeader())
+        .pipe(catchError((err: HttpErrorResponse) => {
+          this.genCtrl.handleError(err);
+          reject(typeof err.error === 'object' ? err.message : err.error);
+          return throwError(() => { new Error(typeof err.error === 'object' ? err.message : err.error) });
+        }))
+
+        .subscribe((res: any) => {
+          resolve(res);
+        });
+    });
+  }
 }

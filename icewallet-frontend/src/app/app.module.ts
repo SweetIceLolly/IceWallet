@@ -13,6 +13,7 @@ import { SettingsComponent } from './pages/settings/settings.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
 import { LoginComponent } from './pages/login/login.component';
+import { ReportComponent } from './pages/report/report.component';
 
 import { AppStorageController } from './controllers/appstorage.controller';
 import { EntryController } from './controllers/entry.controller';
@@ -29,6 +30,7 @@ import { GeneralController } from './controllers/general.controller';
     FooterComponent,
     HeaderComponent,
     LoginComponent,
+    ReportComponent,
   ],
     imports: [
       BrowserModule,

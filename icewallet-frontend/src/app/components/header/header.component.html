@@ -15,6 +15,14 @@
     <i class="fa-solid fa-database"></i>Entries
   </a>
 
+  <a
+    class="header-link"
+    [ngClass]="{'header-active': getUrlPath() == '/report' }"
+    routerLink="/report"
+  >
+    <i class="fa-solid fa-chart-line"></i>Report
+  </a>
+
 <!--  <a-->
 <!--    class="header-link"-->
 <!--    [ngClass]="{'header-active': getUrlPath() == '/manage-types' }"-->

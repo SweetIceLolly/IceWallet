@@ -19,6 +19,7 @@ func initHttpRoutes() {
 	addHttpRoute("POST", "/getEntries", getEntriesHandler)
 	addHttpRoute("POST", "/deleteEntry", deleteEntryHandler)
 	addHttpRoute("POST", "/updateEntry", updateEntryHandler)
+	addHttpRoute("POST", "/getMonthlyReport", getMonthlyReportHandler)
 }
 
 func main() {

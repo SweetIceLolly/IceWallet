@@ -316,3 +316,98 @@ func updateEntry(entryId string, description string, amount float64, date string
 	})
 	return err
 }
+
+// MonthlyReport represents aggregated income/expense data for a single month
+type MonthlyReport struct {
+	Month   int     `bson:"month" json:"month"`
+	Income  float64 `bson:"income" json:"income"`
+	Expense float64 `bson:"expense" json:"expense"`
+}
+
+// getMonthlyReport aggregates entries by month for a given year
+// Returns income (positive amounts) and expense (absolute value of negative amounts) per month
+func getMonthlyReport(year int) ([]MonthlyReport, error) {
+	// Define the date range for the year
+	startDate := time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC)
+	endDate := time.Date(year+1, 1, 1, 0, 0, 0, 0, time.UTC)
+
+	pipeline := []bson.M{
+		// Match entries within the year
+		{
+			"$match": bson.M{
+				"date": bson.M{
+					"$gte": startDate,
+					"$lt":  endDate,
+				},
+			},
+		},
+		// Group by month and calculate income/expense
+		{
+			"$group": bson.M{
+				"_id": bson.M{
+					"$month": "$date",
+				},
+				"income": bson.M{
+					"$sum": bson.M{
+						"$cond": bson.M{
+							"if":   bson.M{"$gte": []interface{}{"$amount", 0}},
+							"then": "$amount",
+							"else": 0,
+						},
+					},
+				},
+				"expense": bson.M{
+					"$sum": bson.M{
+						"$cond": bson.M{
+							"if":   bson.M{"$lt": []interface{}{"$amount", 0}},
+							"then": bson.M{"$abs": "$amount"},
+							"else": 0,
+						},
+					},
+				},
+			},
+		},
+		// Project to rename _id to month
+		{
+			"$project": bson.M{
+				"_id":     0,
+				"month":   "$_id",
+				"income":  1,
+				"expense": 1,
+			},
+		},
+		// Sort by month
+		{
+			"$sort": bson.M{
+				"month": 1,
+			},
+		},
+	}
+
+	cursor, err := getEntriesColl().Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return nil, err
+	}
+
+	var results []MonthlyReport
+	if err = cursor.All(context.Background(), &results); err != nil {
+		return nil, err
+	}
+
+	// Fill in missing months with zero values
+	monthMap := make(map[int]MonthlyReport)
+	for _, r := range results {
+		monthMap[r.Month] = r
+	}
+
+	fullReport := make([]MonthlyReport, 12)
+	for i := 1; i <= 12; i++ {
+		if report, exists := monthMap[i]; exists {
+			fullReport[i-1] = report
+		} else {
+			fullReport[i-1] = MonthlyReport{Month: i, Income: 0, Expense: 0}
+		}
+	}
+
+	return fullReport, nil
+}
